@@ -11,6 +11,12 @@ public class RenderContext(GameWindow window)
     private Shader? _shader;
     private GameWindow _window = window;
 
+    public void Initialize()
+    {
+        GL.DepthFunc(DepthFunction.Less);
+        GL.Enable(EnableCap.DepthTest);
+    }
+    
     public void BindShader(Shader shader)
     {
         GL.UseProgram(shader.ShaderProgram);
@@ -26,7 +32,7 @@ public class RenderContext(GameWindow window)
     public void ClearBuffer()
     {
         GL.ClearColor(0, 0, 0, 1.0f);
-        GL.Clear(ClearBufferMask.ColorBufferBit);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
     }
 
     public void RenderModel(Model model, Matrix4 modelMatrix)
@@ -34,10 +40,12 @@ public class RenderContext(GameWindow window)
         if (_shader is null) return;
         
         GL.BindVertexArray(model.Vao);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.Ebo);
         GL.UniformMatrix4(_shader.ModelMatrixLocation, true, ref modelMatrix);
         GL.UniformMatrix4(_shader.ViewMatrixLocation, true, ref _viewMatrix);
         GL.UniformMatrix4(_shader.ProjectionMatrixLocation, true, ref _projectionMatrix);
         GL.DrawArrays(PrimitiveType.Triangles, 0, model.VertexCount);
+        GL.DrawElements(PrimitiveType.Triangles, model.IndexCount, DrawElementsType.UnsignedInt, 0);
     }
 
     public void Present()

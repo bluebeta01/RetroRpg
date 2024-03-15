@@ -10,6 +10,7 @@ public static class Program
 {
     private static GameWindow _window = default!;
     private static float _rotY;
+    private static float _rotX;
     private static Shader _basicShader = default!;
     private static Model _testCubeModel = default!;
     private static RenderContext _renderContext = default!;
@@ -27,6 +28,7 @@ public static class Program
 
     private static void OnLoad()
     {
+        _renderContext.Initialize();
         _basicShader = BasicShader.LoadShader();
         _testCubeModel = Model.LoadTestCube();
     }
@@ -36,8 +38,11 @@ public static class Program
         _renderContext.ClearBuffer();
         _renderContext.BindShader(_basicShader);
         _renderContext.UseCamera(_camera);
-        _renderContext.RenderModel(_testCubeModel, Matrix4.Identity);
+        _renderContext.RenderModel(_testCubeModel, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
         _renderContext.Present();
+
+        _rotY += (float)(args.Time);
+        _rotX += (float)(0.2 * args.Time);
     }
 
     private static void OnUpdateFrame(FrameEventArgs e)
