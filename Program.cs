@@ -21,9 +21,19 @@ public static class Program
         _window = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
         _window.UpdateFrame += OnUpdateFrame;
         _window.RenderFrame += OnRenderFrame;
+        _window.MouseMove += OnMouseMove;
         _window.Load += OnLoad;
         _renderContext = new(_window);
         _window.Run();
+    }
+
+    private static void OnMouseMove(MouseMoveEventArgs obj)
+    {
+        float sensitivity = 0.01f;
+        if (_window.MouseState.IsButtonDown(MouseButton.Button2))
+        {
+            _camera.Rotate(obj.DeltaY * sensitivity, obj.DeltaX * sensitivity);
+        }
     }
 
     private static void OnLoad()
@@ -41,8 +51,8 @@ public static class Program
         _renderContext.RenderModel(_testCubeModel, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
         _renderContext.Present();
 
-        _rotY += (float)(args.Time);
-        _rotX += (float)(0.2 * args.Time);
+        //_rotY += (float)(args.Time);
+        //_rotX += (float)(0.2 * args.Time);
     }
 
     private static void OnUpdateFrame(FrameEventArgs e)
@@ -51,5 +61,17 @@ public static class Program
         {
             _window.Close();
         }
+        if(_window.KeyboardState.IsKeyDown(Keys.W))
+            _camera.MoveForward();
+        if(_window.KeyboardState.IsKeyDown(Keys.S))
+            _camera.MoveBack();
+        if(_window.KeyboardState.IsKeyDown(Keys.A))
+            _camera.MoveLeft();
+        if(_window.KeyboardState.IsKeyDown(Keys.D))
+            _camera.MoveRight();
+        if(_window.KeyboardState.IsKeyDown(Keys.Q))
+            _camera.MoveUp();
+        if(_window.KeyboardState.IsKeyDown(Keys.E))
+            _camera.MoveDown();
     }
 }
