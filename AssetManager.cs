@@ -2,6 +2,7 @@
 
 public class AssetManager
 {
+    public static ColladaParser ColladaParser { get; } = new();
     private Dictionary<string, Asset> _assetStore = new();
 
     public Asset GetAsset(Asset.AssetType type, string name)

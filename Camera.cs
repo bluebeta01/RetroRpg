@@ -25,7 +25,6 @@ public class Camera
     {
         var newXRot = Quaternion.FromEulerAngles(x, 0.0f, 0.0f) * _rotation;
         var forward = newXRot * new Vector3(0, 1, 0);
-        Console.WriteLine(forward.Y);
         if (forward.Y > 0.1f)
             _rotation = newXRot;
         _rotation = _rotation * Quaternion.FromEulerAngles(0.0f, y, 0.0f);

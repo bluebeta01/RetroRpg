@@ -1,17 +1,23 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using System.Xml;
+using OpenTK.Graphics.OpenGL;
 
 namespace RetroRpg;
 
 public class Model : Asset
 {
-    public int Vao { get; private set; } = -1;
-    public int Ebo { get; private set; } = -1;
-    public int VertexCount { get; private set; }
-    public int IndexCount { get; private set; }
-    
-    public override Asset LoadFromDisk(string filePath)
+    public int Vao { get; set; } = -1;
+    public int VertexCount { get; set; }
+    public Mesh[] Meshes { get; set; } = Array.Empty<Mesh>();
+
+    public override void LoadFromDisk(string filePath)
     {
-        throw new NotImplementedException();
+        var model = AssetManager.ColladaParser.ParseFile(filePath);
+        if (model is not null)
+        {
+            Vao = model.Vao;
+            VertexCount = model.VertexCount;
+            Meshes = model.Meshes;
+        }
     }
 
     public static Model LoadTestCube()
@@ -19,10 +25,17 @@ public class Model : Asset
         var model = new Model
         {
             Vao = GL.GenVertexArray(),
-            Ebo = GL.GenBuffer(),
             VertexCount = Cube.Verticies.Length / 3,
-            IndexCount = Cube.Elements.Length
+            Meshes = 
+            [
+                new Mesh()
+                {
+                    Ebo = GL.GenBuffer(),
+                    ElementCount = Cube.Elements.Length
+                }
+            ]
         };
+        var mesh = model.Meshes[0];
         GL.BindVertexArray(model.Vao);
         var vbo = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
@@ -36,8 +49,8 @@ public class Model : Asset
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, sizeof(float) * 3, 0);
         GL.EnableVertexAttribArray(1);
 
-        model.Ebo = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.Ebo);
+        mesh.Ebo = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, mesh.Ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, Cube.Elements.Length * sizeof(int), Cube.Elements, BufferUsageHint.StaticDraw);
         
         return model;

@@ -15,6 +15,8 @@ public static class Program
     private static Model _testCubeModel = default!;
     private static RenderContext _renderContext = default!;
     private static Camera _camera = new();
+    private static Model _testDae = default!;
+    private static AssetManager _assetmanager = default!;
     
     public static void Main(string[] args)
     {
@@ -39,8 +41,10 @@ public static class Program
     private static void OnLoad()
     {
         _renderContext.Initialize();
+        _assetmanager = new();
         _basicShader = BasicShader.LoadShader();
         _testCubeModel = Model.LoadTestCube();
+        _testDae = (Model)_assetmanager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/cube.dae");
     }
 
     private static void OnRenderFrame(FrameEventArgs args)
@@ -48,7 +52,7 @@ public static class Program
         _renderContext.ClearBuffer();
         _renderContext.BindShader(_basicShader);
         _renderContext.UseCamera(_camera);
-        _renderContext.RenderModel(_testCubeModel, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
+        _renderContext.RenderModel(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
         _renderContext.Present();
 
         //_rotY += (float)(args.Time);

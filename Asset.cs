@@ -11,5 +11,5 @@ public abstract class Asset
     
     public string Name { get; set; } = "invalid";
 
-    public abstract Asset LoadFromDisk(string filePath);
+    public abstract void LoadFromDisk(string filePath);
 }

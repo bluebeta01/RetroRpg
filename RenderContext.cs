@@ -38,14 +38,16 @@ public class RenderContext(GameWindow window)
     public void RenderModel(Model model, Matrix4 modelMatrix)
     {
         if (_shader is null) return;
-        
+
         GL.BindVertexArray(model.Vao);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.Ebo);
-        GL.UniformMatrix4(_shader.ModelMatrixLocation, true, ref modelMatrix);
-        GL.UniformMatrix4(_shader.ViewMatrixLocation, true, ref _viewMatrix);
-        GL.UniformMatrix4(_shader.ProjectionMatrixLocation, true, ref _projectionMatrix);
-        GL.DrawArrays(PrimitiveType.Triangles, 0, model.VertexCount);
-        GL.DrawElements(PrimitiveType.Triangles, model.IndexCount, DrawElementsType.UnsignedInt, 0);
+        foreach (var mesh in model.Meshes)
+        {
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, mesh.Ebo);
+            GL.UniformMatrix4(_shader.ModelMatrixLocation, true, ref modelMatrix);
+            GL.UniformMatrix4(_shader.ViewMatrixLocation, true, ref _viewMatrix);
+            GL.UniformMatrix4(_shader.ProjectionMatrixLocation, true, ref _projectionMatrix);
+            GL.DrawElements(PrimitiveType.Triangles, mesh.ElementCount, DrawElementsType.UnsignedInt, 0);
+        }
     }
 
     public void Present()
