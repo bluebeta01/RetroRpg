@@ -17,6 +17,14 @@ public class AssetManager
             _assetStore[name] = asset;
             return asset;
         }
+        
+        if (type == Asset.AssetType.TEXTURE)
+        {
+            var asset = new Texture();
+            asset.LoadFromDisk(name);
+            _assetStore[name] = asset;
+            return asset;
+        }
 
         throw new NotImplementedException();
     }

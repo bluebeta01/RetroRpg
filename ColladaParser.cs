@@ -170,6 +170,7 @@ public class ColladaParser
             _meshes.Add(mesh);
             for (int i = 0; i < _triangleElements.Count; i += vertexComponentCount)
             {
+                //TODO: This method can result in duplicate vertices, making EBOs pointless. This needs to be fixed.
                 var vertexIndex = _triangleElements[i + vertexInputOffset];
                 var normalIndex = _triangleElements[i + normalInputOffset];
                 var uvIndex = _triangleElements[i + uvInputOffset];
@@ -208,7 +209,7 @@ public class ColladaParser
         GL.EnableVertexAttribArray(0);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, sizeof(float) * 8, sizeof(float) * 3);
         GL.EnableVertexAttribArray(1);
-        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, sizeof(float) * 8, sizeof(float) * 2);
+        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, sizeof(float) * 8, sizeof(float) * 6);
         GL.EnableVertexAttribArray(2);
 
         return model;
