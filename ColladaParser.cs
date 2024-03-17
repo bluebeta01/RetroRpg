@@ -119,6 +119,8 @@ public class ColladaParser
         for (int triNodeIndex = 0; triNodeIndex < triangleNodes.Count; triNodeIndex++)
         {
             var triNode = triangleNodes.Item(triNodeIndex)!;
+            var meshMaterialName =
+                triNode.Attributes?.GetNamedItem("material")?.Value?.Split("-").FirstOrDefault() ?? "";
             var inputNodes = triNode.SelectNodes("descendant::dae:input", _namespaceManager);
             if (inputNodes is not { Count: > 0 })
                 throw new Exception("Failed to find triangles input node.");
@@ -165,7 +167,8 @@ public class ColladaParser
             _meshElements.Clear();
             var mesh = new Mesh()
             {
-                Ebo = GL.GenBuffer()
+                Ebo = GL.GenBuffer(),
+                Material = (Material)Game.AssetManager.GetAsset(Asset.AssetType.MATERIAL, meshMaterialName)
             };
             _meshes.Add(mesh);
             for (int i = 0; i < _triangleElements.Count; i += vertexComponentCount)

@@ -12,12 +12,9 @@ public static class Program
     private static float _rotY;
     private static float _rotX;
     private static Shader _basicShader = default!;
-    private static Model _testCubeModel = default!;
     private static RenderContext _renderContext = default!;
     private static Camera _camera = new();
     private static Model _testDae = default!;
-    private static AssetManager _assetmanager = default!;
-    private static Texture _testTexture = default!;
     
     public static void Main(string[] args)
     {
@@ -26,8 +23,14 @@ public static class Program
         _window.RenderFrame += OnRenderFrame;
         _window.MouseMove += OnMouseMove;
         _window.Load += OnLoad;
+        _window.Resize += OnResize;
         _renderContext = new(_window);
         _window.Run();
+    }
+
+    private static void OnResize(ResizeEventArgs obj)
+    {
+        GL.Viewport(0, 0, obj.Width, obj.Height);
     }
 
     private static void OnMouseMove(MouseMoveEventArgs obj)
@@ -42,11 +45,9 @@ public static class Program
     private static void OnLoad()
     {
         _renderContext.Initialize();
-        _assetmanager = new();
+        Game.Initialize();
         _basicShader = BasicShader.LoadShader();
-        _testCubeModel = Model.LoadTestCube();
-        _testDae = (Model)_assetmanager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/cube.dae");
-        _testTexture = (Texture)_assetmanager.GetAsset(Asset.AssetType.TEXTURE, "C:/game/assets/retro/textures/scaled/brick1.png");
+        _testDae = (Model)Game.AssetManager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/cube.dae");
     }
 
     private static void OnRenderFrame(FrameEventArgs args)
@@ -54,7 +55,7 @@ public static class Program
         _renderContext.ClearBuffer();
         _renderContext.BindShader(_basicShader);
         _renderContext.UseCamera(_camera);
-        _renderContext.RenderModel(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY), _testTexture);
+        _renderContext.RenderModel(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
         _renderContext.Present();
 
         //_rotY += (float)(args.Time);

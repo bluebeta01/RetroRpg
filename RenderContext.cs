@@ -35,14 +35,14 @@ public class RenderContext(GameWindow window)
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
     }
 
-    public void RenderModel(Model model, Matrix4 modelMatrix, Texture texture)
+    public void RenderModel(Model model, Matrix4 modelMatrix)
     {
         if (_shader is null) return;
 
-        GL.BindTexture(TextureTarget.Texture2D, texture.TextureId);
         GL.BindVertexArray(model.Vao);
         foreach (var mesh in model.Meshes)
         {
+            GL.BindTexture(TextureTarget.Texture2D, mesh.Material?.ColorTexture.TextureId ?? 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, mesh.Ebo);
             GL.UniformMatrix4(_shader.ModelMatrixLocation, true, ref modelMatrix);
             GL.UniformMatrix4(_shader.ViewMatrixLocation, true, ref _viewMatrix);

@@ -6,7 +6,8 @@ public abstract class Asset
     {
         INVALID,
         MODEL,
-        TEXTURE
+        TEXTURE,
+        MATERIAL
     }
     
     public string Name { get; set; } = "invalid";

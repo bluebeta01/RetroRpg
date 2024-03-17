@@ -18,7 +18,7 @@ public class Texture : Asset
         {
             TextureId = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, TextureId);
-            var bitmap = new Bitmap(filePath);
+            var bitmap = new Bitmap(Game.AssetManager.AssetBasePath + "Textures/" + filePath + ".png");
             var textureData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
                 PixelFormat.Format32bppPArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmap.Width, bitmap.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, textureData.Scan0);
