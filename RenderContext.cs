@@ -76,6 +76,13 @@ public class RenderContext(GameWindow window)
         }
     }
 
+    public float GetDepthpickResult(int x, int y)
+    {
+        float[] pixelData = new float[1];
+        GL.ReadPixels(x, y, 1, 1, PixelFormat.DepthComponent, PixelType.Float, pixelData);
+        return pixelData[0];
+    }
+
     public Vector3 GetColorpickResult(int x, int y)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _colorpickFramebuffer.GlId);

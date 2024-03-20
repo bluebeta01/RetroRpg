@@ -15,6 +15,9 @@ public static class Program
     private static RenderContext _renderContext = default!;
     private static Camera _camera = new();
     private static Model _testDae = default!;
+    private static Model _plane = default!;
+    private static Model _sphere = default!;
+    private static Vector3 _sphereLocation = new();
     
     public static void Main(string[] args)
     {
@@ -31,6 +34,7 @@ public static class Program
     private static void OnResize(ResizeEventArgs obj)
     {
         _renderContext.Resize(obj.Width, obj.Height);
+        _camera.Resize(_window.ClientSize.X, _window.ClientSize.Y);
     }
 
     private static void OnMouseMove(MouseMoveEventArgs obj)
@@ -47,7 +51,9 @@ public static class Program
         _renderContext.Initialize(_window.Size.X, _window.Size.Y);
         Game.Initialize();
         _basicShader = BasicShader.LoadShader();
-        _testDae = (Model)Game.AssetManager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/cube.dae");
+        //_testDae = (Model)Game.AssetManager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/cube.dae");
+        _plane = (Model)Game.AssetManager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/plane.dae");
+        _sphere = (Model)Game.AssetManager.GetAsset(Asset.AssetType.MODEL, "C:/game/assets/sphere.dae");
     }
 
     private static void OnRenderFrame(FrameEventArgs args)
@@ -55,16 +61,19 @@ public static class Program
         _renderContext.ClearBuffer();
         _renderContext.BindShader(_basicShader);
         _renderContext.UseCamera(_camera);
-        _renderContext.RenderModel(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
+        //_renderContext.RenderModel(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY));
+        _renderContext.RenderModel(_sphere, Matrix4.CreateTranslation(_sphereLocation));
+        _renderContext.RenderModel(_plane, Matrix4.Identity);
         _renderContext.Present();
+        
 
-        if (_window.MouseState.IsButtonPressed(MouseButton.Button1))
+        if (_window.MouseState.IsButtonPressed(MouseButton.Button1) || true)
         {
-            _renderContext.BeginColorpickRender();
-            _renderContext.RenderModelColorpick(_testDae, Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY), new Vector3(0.55f, 0.25f, 0.11f));
-            _renderContext.EndColorpickRender();
-            var pickValue = _renderContext.GetColorpickResult((int)_window.MouseState.X, _window.ClientSize.Y - (int)_window.MouseState.Y);
-            Console.WriteLine($"X: {pickValue.X} Y: {pickValue.Y} Z: {pickValue.Z}");
+            var ray = _camera.GetRay(_window.MouseState.X, _window.MouseState.Y, (float)_window.ClientSize.X,
+                (float)_window.ClientSize.Y);
+            var yDir = ray.Y;
+            var dist = _camera.Position.Y / yDir;
+            _sphereLocation = ray * dist - _camera.Position;
         }
 
         //_rotY += (float)(args.Time);

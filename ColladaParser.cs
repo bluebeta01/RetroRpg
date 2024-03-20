@@ -99,6 +99,9 @@ public class ColladaParser
         _meshElements.Clear();
         
         var model = new Model();
+        GL.BindVertexArray(0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         model.Vao = GL.GenVertexArray();
         GL.BindVertexArray(model.Vao);
 
